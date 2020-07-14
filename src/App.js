@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
 
 function App() {
+  const[catPics, setCatPics] = useState([])
+
+  const addCatToScreen = () => {
+    let catPicsNewArray = catPics.slice()
+    fetch('https://aws.random.cat/meow')
+      .then(response => response.json())
+      .then(data => {
+        catPicsNewArray.push(data.file)
+        setCatPics(catPicsNewArray)
+      }) 
+  }
+  const deleteImg = (i) => {
+    let catImgs = catPics.slice()
+    delete catImgs[i]
+    setCatPics(catImgs)
+  }
+  const newImgTags = catPics.map((url, i) => <img key={i} onClick={()=>deleteImg(i)} src={url}/>)
+
+  window.onload = addCatToScreen
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {newImgTags}
+      <button onClick={addCatToScreen}>Another one!</button>
     </div>
   );
 }
